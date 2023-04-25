@@ -17,4 +17,5 @@ vim.opt.updatetime = 50
 vim.opt.timeoutlen = 400
 vim.opt.ttimeoutlen = 50
 
+vim.g.gitblame_enabled = 0
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
