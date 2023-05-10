@@ -78,6 +78,10 @@ lspconfig.gopls.setup {
 	},
 }
 
+lspconfig.zls.setup {
+	on_attach = on_attach,
+}
+
 lsp.on_attach(on_attach)
 lsp.setup()
 
