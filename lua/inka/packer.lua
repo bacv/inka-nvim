@@ -7,14 +7,11 @@ return require('packer').startup(function(use)
 	-- Packer can manage itself
 	use 'wbthomason/packer.nvim'
 
-	use {
-		'nvim-telescope/telescope.nvim', tag = '0.1.1',
-		requires = { { 'nvim-lua/plenary.nvim' } }
-	}
-
 	use({ 'rose-pine/neovim', as = 'rose-pine' })
 	use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
 	use('nvim-tree/nvim-tree.lua')
+	use('junegunn/fzf', { run = ':fzf#install()' })
+	use('junegunn/fzf.vim')
 
 	use {
 		'VonHeikemen/lsp-zero.nvim',

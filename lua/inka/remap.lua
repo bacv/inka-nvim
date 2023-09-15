@@ -25,3 +25,10 @@ vim.keymap.set("n", "<leader>b", ":GitBlameToggle<CR>")
 -- zoom features
 vim.keymap.set("n", "<leader>zi", ":tab split<CR>")
 vim.keymap.set("n", "<leader>zo", ":tab close<CR>")
+
+-- fzf
+vim.keymap.set('n', '<leader>jj', ":Files<CR>")
+vim.keymap.set("n", "<leader>jk", ":Rg<CR>")
+vim.keymap.set('n', '<leader>ll', ":Buffers<CR>")
+vim.keymap.set('n', '<leader>jh', ":Maps<CR>")
+vim.keymap.set('n', '<leader>/', ":Lines<CR>")
