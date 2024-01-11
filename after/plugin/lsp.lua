@@ -1,5 +1,5 @@
 local lsp = require('lsp-zero').preset({})
-vim.lsp.set_log_level("debug")
+vim.lsp.set_log_level("off")
 -- When you don't have mason.nvim installed
 -- You'll need to list the servers installed in your system
 local lspconfig = require 'lspconfig'
