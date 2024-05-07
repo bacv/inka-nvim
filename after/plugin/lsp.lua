@@ -69,6 +69,7 @@ lspconfig.rust_analyzer.setup {
         },
     },
     capabilities = capabilities,
+    cmd = { "rustup", "run", "nightly", "rust-analyzer" },
 }
 
 lspconfig.gopls.setup {
