@@ -45,42 +45,53 @@ local pine_setup = {
     }
 }
 
-local function pineCheck(pineconf)
-    local theme = fileops.read_file_sync(pineconf)
-    if theme:find(pine_setup.variant) == nil then
-        PineToggle()
-    end
-end
+local current_theme = "light"
 
-function PineToggle()
-    local variant = pine_setup.variant
-    if variant == 'main' then
-        pine_setup.variant = 'dawn'
-    else
-        pine_setup.variant = 'main'
-    end
+local function set_light()
+    vim.opt.background = "light"
+    pine_setup.variant = "dawn"
+
     require('rose-pine').setup(pine_setup)
     vim.cmd.colorscheme("rose-pine")
 end
 
-function PineInit()
-    local pineconf = vim.fn.stdpath('config') .. "/pineconf"
-    local theme = fileops.read_file_sync(pineconf)
+local function set_dark()
+    vim.opt.background = "dark"
+    vim.cmd.colorscheme("oxocarbon")
+end
 
-    if theme:find("main") == nil then
-        pine_setup.variant = "dawn"
+local function candy_check(conf)
+    local theme = fileops.read_file_sync(conf)
+    if theme:find(current_theme) == nil then
+        CandySet(theme)
+    end
+end
+
+function CandySet(theme)
+    if theme:find('light') then
+        set_light()
     else
-        pine_setup.variant = "main"
+        set_dark()
+    end
+    current_theme = theme
+end
+
+function CandyInit()
+    local conf = vim.fn.stdpath('config') .. "/theme"
+    current_theme = fileops.read_file_sync(conf)
+
+    if current_theme:find("dark") == nil then
+        set_light()
+    else
+        set_dark()
     end
 
-    require('rose-pine').setup(pine_setup)
-    vim.cmd.colorscheme("rose-pine")
 
-    local on_event = function(_, _, _) vim.schedule(function() pineCheck(pineconf) end) end
+    local on_event = function(_, _, _) vim.schedule(function() candy_check(conf) end) end
     local on_error = function(_, _) end
 
-    -- Start watching for changes made to pineconf by other apps.
-    fileops.watch_with_function(pineconf, on_event, on_error, {})
+    -- Start watching for changes made to conf by other apps.
+    fileops.watch_with_function(conf, on_event, on_error, {})
 end
 
-PineInit()
+CandyInit()

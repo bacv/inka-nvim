@@ -8,6 +8,7 @@ return require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
     use({ 'rose-pine/neovim', as = 'rose-pine' })
+    use({ 'nyoom-engineering/oxocarbon.nvim', as = 'oxocarbon' })
     use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
     use('nvim-tree/nvim-tree.lua')
     use('junegunn/fzf', { run = ':fzf#install()' })
