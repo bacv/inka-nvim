@@ -6,17 +6,6 @@ local lspconfig = require 'lspconfig'
 local util = require 'lspconfig/util'
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-local lua_opts = lsp.nvim_lua_ls()
-lua_opts["format"] = {
-    enable = true,
-    defaultConfig = {
-        indent_style = "space",
-        indent_size = "4",
-    }
-}
-
-lspconfig.lua_ls.setup(lua_opts)
-
 lsp.set_preferences({
     suggest_lsp_servers = false,
     sign_icons = {
@@ -48,6 +37,17 @@ local on_attach = function(_, bufnr)
     vim.keymap.set("n", "<space>f", function() vim.lsp.buf.format() end, opts)
 end
 
+local lua_opts = lsp.nvim_lua_ls()
+lua_opts["on_attach"] = on_attach
+lua_opts["format"] = {
+    enable = true,
+    defaultConfig = {
+        indent_style = "space",
+        indent_size = "4",
+    }
+}
+lspconfig.lua_ls.setup(lua_opts)
+
 lspconfig.rust_analyzer.setup {
     on_attach = on_attach,
     flags = {
@@ -69,7 +69,7 @@ lspconfig.rust_analyzer.setup {
         },
     },
     capabilities = capabilities,
-    cmd = { "rustup", "run", "nightly", "rust-analyzer" },
+    --cmd = { "rustup", "run", "nightly", "rust-analyzer" },
 }
 
 lspconfig.gopls.setup {
