@@ -76,6 +76,16 @@ function CandySet(theme)
     current_theme = theme
 end
 
+function CandyToggle()
+    if current_theme:find('light') then
+        set_dark()
+        current_theme = "dark"
+    else
+        set_light()
+        current_theme = "light"
+    end
+end
+
 function CandyInit()
     local conf = vim.fn.stdpath('config') .. "/theme"
     current_theme = fileops.read_file_sync(conf)

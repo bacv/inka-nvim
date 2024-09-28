@@ -18,7 +18,7 @@ vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("n", "<leader>t", ":lua PineToggle()<CR>")
+vim.keymap.set("n", "<leader>t", ":lua CandyToggle()<CR>")
 
 vim.keymap.set("n", "<leader>b", ":GitBlameToggle<CR>")
 
