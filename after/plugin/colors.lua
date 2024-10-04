@@ -61,7 +61,12 @@ local function set_dark()
 end
 
 local function candy_check(conf)
-    local theme = fileops.read_file_sync(conf)
+    local theme, err = fileops.read_file_sync(conf)
+    if not theme then
+        vim.notify("Error loading theme configuration: " .. err, vim.log.levels.ERROR)
+        return
+    end
+
     if theme:find(current_theme) == nil then
         CandySet(theme)
     end
@@ -88,7 +93,11 @@ end
 
 function CandyInit()
     local conf = vim.fn.stdpath('config') .. "/theme"
-    current_theme = fileops.read_file_sync(conf)
+    current_theme, err = fileops.read_file_sync(conf)
+    if not current_theme then
+        vim.notify("Error loading theme configuration: " .. err, vim.log.levels.ERROR)
+        current_theme = "dark"
+    end
 
     if current_theme:find("dark") == nil then
         set_light()

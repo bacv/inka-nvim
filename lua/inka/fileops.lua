@@ -40,12 +40,27 @@ local function watch_with_function(path, on_event, on_error, opts)
 end
 
 local function read_file_sync(path)
-    local fd = assert(uv.fs_open(path, "r", 438))
-    local stat = assert(uv.fs_fstat(fd))
-    local data = assert(uv.fs_read(fd, stat.size, 0))
+    local fd, err = uv.fs_open(path, "r", 438)
+    if not fd then
+        return nil, "File does not exist or could not be opened: " .. err
+    end
+
+    local stat, err = uv.fs_fstat(fd)
+    if not stat then
+        uv.fs_close(fd)
+        return nil, "Could not stat file: " .. err
+    end
+
+    local data, err = uv.fs_read(fd, stat.size, 0)
+    if not data then
+        uv.fs_close(fd)
+        return nil, "Could not read file: " .. err
+    end
+
     assert(uv.fs_close(fd))
     return data
 end
+
 
 local M = {
     read_file_sync = read_file_sync,
