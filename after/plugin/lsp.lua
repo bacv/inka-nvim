@@ -1,137 +1,145 @@
-local lsp = require('lsp-zero').preset({})
-vim.lsp.set_log_level("off")
+-- vim.lsp.set_log_level("off")
 -- When you don't have mason.nvim installed
 -- You'll need to list the servers installed in your system
-local lspconfig = require 'lspconfig'
-local util = require 'lspconfig/util'
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-lsp.set_preferences({
-    suggest_lsp_servers = false,
-    sign_icons = {
-        error = 'E',
-        warn = 'W',
-        hint = 'H',
-        info = 'I'
+vim.lsp.config('lua_ls', {
+    cmd = { 'lua-language-server' },
+    filetypes = { 'lua' },
+    -- Sets the "workspace" to the directory where any of these files is found.
+    root_markers = {
+        ".luarc.json",
+        ".luarc.jsonc",
+        ".luacheckrc",
+        ".stylua.toml",
+        ".git",
+    },
+    settings = {
+        Lua = {
+            runtime = {
+                version = 'LuaJIT',
+            }
+        }
     }
 })
 
-local on_attach = function(_, bufnr)
-    lsp.default_keymaps({ buffer = bufnr })
-    local opts = { buffer = bufnr, remap = false }
 
-    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-    vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration() end, opts)
-    vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end, opts)
-    vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end, opts)
-    vim.keymap.set('n', 'gi', function() vim.lsp.buf.implementation() end, opts)
-    vim.keymap.set('n', '<C-k>', function() vim.lsp.buf.signature_help() end, opts)
-    vim.keymap.set('n', '<space>D', function() vim.lsp.buf.type_definition() end, opts)
-    vim.keymap.set('n', '<space>r', function() vim.lsp.buf.rename() end, opts)
-    vim.keymap.set('n', '<space>a', function() vim.lsp.buf.code_action() end, opts)
-    vim.keymap.set('n', 'gr', function() vim.lsp.buf.references() end, opts)
-    vim.keymap.set('n', '<space>e', function() vim.diagnostic.open_float() end, opts)
-    vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, opts)
-    vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, opts)
-    vim.keymap.set('n', '<space>q', function() vim.diagnostic.setloclist() end, opts)
-    vim.keymap.set("n", "<space>f", function() vim.lsp.buf.format() end, opts)
-end
-
-local lua_opts = lsp.nvim_lua_ls()
-lua_opts["on_attach"] = on_attach
-lua_opts["format"] = {
-    enable = true,
-    defaultConfig = {
-        indent_style = "space",
-        indent_size = "4",
-    }
-}
-lspconfig.lua_ls.setup(lua_opts)
-
-lspconfig.rust_analyzer.setup {
-    on_attach = on_attach,
-    flags = {
-        debounce_text_changes = 150,
+vim.lsp.config('rust_analyzer', {
+    -- cmd = { 'rust-analyzer' },
+    cmd = { "rustup", "run", "stable", "rust-analyzer" },
+    filetypes = { 'rust' },
+    root_markers = {
+        ".git",
+        "Cargo.lock",
     },
     settings = {
-        ["rust-analyzer"] = {
+        ['rust-analyzer'] = {
             cargo = {
+                targetDir = true,
+                allTargets = true,
                 allFeatures = true,
+            },
+            check = { command = 'clippy' },
+            checkOnSave = true,
+            inlayHints = {
+                bindingModeHints = { enabled = true },
+                closureCaptureHints = { enabled = true },
+                closureReturnTypeHints = { enable = 'always' },
+                maxLength = 100,
             },
             completion = {
                 postfix = {
                     enable = false,
                 },
             },
-            checkOnSave = {
-                command = "clippy"
-            },
-        },
-    },
-    capabilities = capabilities,
-    cmd = { "rustup", "run", "nightly-2025-02-16", "rust-analyzer" },
-}
-
-lspconfig.gopls.setup {
-    on_attach = on_attach,
-    cmd = { "gopls", "serve" },
-    filetypes = { "go", "gomod" },
-    root_dir = util.root_pattern("go.work", "go.mod", ".git"),
-    settings = {
-        gopls = {
-            analyses = {
-                unusedparams = true,
-            },
-            staticcheck = true,
-        },
-    },
-}
-
-lspconfig.zls.setup {
-    on_attach = on_attach,
-}
-
-lsp.on_attach(on_attach)
-lsp.setup()
-
-local cmp = require 'cmp'
-cmp.setup({
-    -- Enable LSP snippets
-    snippet = {
-        expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body)
-        end,
-    },
-    mapping = {
-        ['<M-k>'] = cmp.mapping.select_prev_item(),
-        ['<M-j>'] = cmp.mapping.select_next_item(),
-        -- Add tab support
-        ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-        ['<Tab>'] = cmp.mapping.select_next_item(),
-        ['<M-,>'] = cmp.mapping.scroll_docs(-4),
-        ['<M-m>'] = cmp.mapping.scroll_docs(4),
-        ['<M-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.close(),
-        ['<CR>'] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Insert,
-            select = true,
-        })
-    },
-    -- Installed sources
-    sources = {
-        { name = 'nvim_lsp' },
-        { name = 'vsnip' },
-        { name = 'path' },
-        { name = 'buffer' },
-    },
-    experimental = {
-        ghost_text = true,
-    },
+            rustc = { source = 'discover' },
+        }
+    }
 })
 
--- Enable completing paths in :
-cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({
-        { name = 'path' }
-    })
-})
+vim.lsp.enable('lua_ls')
+vim.lsp.enable('rust_analyzer')
+
+-- lspconfig.rust_analyzer.setup {
+--     on_attach = on_attach,
+--     flags = {
+--         debounce_text_changes = 150,
+--     },
+--     settings = {
+--         ["rust-analyzer"] = {
+--             cargo = {
+--                 allFeatures = true,
+--             },
+--             completion = {
+--                 postfix = {
+--                     enable = false,
+--                 },
+--             },
+--             checkOnSave = {
+--                 command = "clippy"
+--             },
+--         },
+--     },
+--     capabilities = capabilities,
+--     cmd = { "rustup", "run", "nightly-2025-02-16", "rust-analyzer" },
+-- }
+
+-- lspconfig.gopls.setup {
+--     on_attach = on_attach,
+--     cmd = { "gopls", "serve" },
+--     filetypes = { "go", "gomod" },
+--     root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+--     settings = {
+--         gopls = {
+--             analyses = {
+--                 unusedparams = true,
+--             },
+--             staticcheck = true,
+--         },
+--     },
+-- }
+
+-- lspconfig.zls.setup {
+--     on_attach = on_attach,
+-- }
+
+-- local cmp = require 'cmp'
+-- cmp.setup({
+--     -- Enable LSP snippets
+--     snippet = {
+--         expand = function(args)
+--             vim.fn["vsnip#anonymous"](args.body)
+--         end,
+--     },
+--     mapping = {
+--         ['<M-k>'] = cmp.mapping.select_prev_item(),
+--         ['<M-j>'] = cmp.mapping.select_next_item(),
+--         -- Add tab support
+--         ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+--         ['<Tab>'] = cmp.mapping.select_next_item(),
+--         ['<M-,>'] = cmp.mapping.scroll_docs(-4),
+--         ['<M-m>'] = cmp.mapping.scroll_docs(4),
+--         ['<M-Space>'] = cmp.mapping.complete(),
+--         ['<C-e>'] = cmp.mapping.close(),
+--         ['<CR>'] = cmp.mapping.confirm({
+--             behavior = cmp.ConfirmBehavior.Insert,
+--             select = true,
+--         })
+--     },
+--     -- Installed sources
+--     sources = {
+--         { name = 'nvim_lsp' },
+--         { name = 'vsnip' },
+--         { name = 'path' },
+--         { name = 'buffer' },
+--     },
+--     experimental = {
+--         ghost_text = true,
+--     },
+-- })
+--
+-- -- Enable completing paths in :
+-- cmp.setup.cmdline(':', {
+--     sources = cmp.config.sources({
+--         { name = 'path' }
+--     })
+-- })

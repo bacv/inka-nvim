@@ -1,48 +1,60 @@
 local fileops = require("inka.fileops")
 
 local pine_setup = {
-    --- @usage 'auto'|'main'|'moon'|'dawn'
-    variant = 'auto',
-    --- @usage 'main'|'moon'|'dawn'
-    dark_variant = 'main',
-    bold_vert_split = false,
-    dim_nc_background = false,
-    disable_background = false,
-    disable_float_background = false,
-    disable_italics = false,
-    --- @usage string hex value or named color from rosepinetheme.com/palette
-    groups = {
-        background = 'base',
-        background_nc = '_experimental_nc',
-        panel = 'surface',
-        panel_nc = 'base',
-        border = 'highlight_med',
-        comment = 'muted',
-        link = 'iris',
-        punctuation = 'subtle',
-        error = 'love',
-        hint = 'iris',
-        info = 'foam',
-        warn = 'gold',
-        headings = {
-            h1 = 'iris',
-            h2 = 'foam',
-            h3 = 'rose',
-            h4 = 'gold',
-            h5 = 'pine',
-            h6 = 'foam',
-        }
-        -- or set all headings at once
-        -- headings = 'subtle'
+    variant = "auto",      -- auto, main, moon, or dawn
+    dark_variant = "main", -- main, moon, or dawn
+    dim_inactive_windows = false,
+    extend_background_behind_borders = false,
+
+    enable = {
+        terminal = true,
+        legacy_highlights = true,
+        migrations = true,
     },
-    -- Change specific vim highlight groups
-    -- https://github.com/rose-pine/neovim/wiki/Recipes
-    highlight_groups = {
-        ColorColumn = { bg = 'rose' },
-        -- Blend colours against the "base" background
-        CursorLine = { bg = 'foam', blend = 10 },
-        StatusLine = { fg = 'love', bg = 'love', blend = 10 },
-    }
+
+    styles = {
+        bold = true,
+        italic = true,
+        transparency = false,
+    },
+
+    groups = {
+        border = "muted",
+        link = "iris",
+        panel = "surface",
+
+        error = "love",
+        hint = "iris",
+        info = "foam",
+        note = "pine",
+        todo = "rose",
+        warn = "gold",
+
+        git_add = "foam",
+        git_change = "rose",
+        git_delete = "love",
+        git_dirty = "rose",
+        git_ignore = "muted",
+        git_merge = "iris",
+        git_rename = "pine",
+        git_stage = "iris",
+        git_text = "rose",
+        git_untracked = "subtle",
+
+        h1 = "iris",
+        h2 = "foam",
+        h3 = "rose",
+        h4 = "gold",
+        h5 = "pine",
+        h6 = "foam",
+    },
+
+    palette = {
+        -- Override the builtin palette per variant
+        main = {
+            base = '#0d0a0a',
+        },
+    },
 }
 
 local current_theme = "light"
@@ -57,7 +69,10 @@ end
 
 local function set_dark()
     vim.opt.background = "dark"
-    vim.cmd.colorscheme("oxocarbon")
+    pine_setup.variant = "main"
+
+    require('rose-pine').setup(pine_setup)
+    vim.cmd.colorscheme("rose-pine")
 end
 
 local function candy_check(conf)
