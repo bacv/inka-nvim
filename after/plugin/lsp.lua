@@ -40,6 +40,7 @@ vim.lsp.config('rust_analyzer', {
             },
             check = { command = 'clippy' },
             checkOnSave = true,
+            diagnostics = true,
             inlayHints = {
                 bindingModeHints = { enabled = true },
                 closureCaptureHints = { enabled = true },
@@ -58,6 +59,10 @@ vim.lsp.config('rust_analyzer', {
 
 vim.lsp.enable('lua_ls')
 vim.lsp.enable('rust_analyzer')
+
+vim.diagnostic.config({
+    update_in_insert = true,
+})
 
 -- lspconfig.rust_analyzer.setup {
 --     on_attach = on_attach,
