@@ -140,8 +140,8 @@ end, { expr = true })
 vim.opt.completeopt = { "menuone", "noselect", "noinsert", "popup", "preview" }
 vim.keymap.set('i', '<C-c>', '<C-x><C-o>', { noremap = true })
 
-vim.keymap.set('n', '<leader>jj', explore.fzf_root)
-vim.keymap.set('n', '<leader>ji', explore.fzf_relative)
+vim.keymap.set('n', '<leader>j', explore.fzf_root)
+vim.keymap.set('n', '<leader>i', explore.fzf_relative)
 vim.keymap.set('n', '<leader>jk', explore.grep_root)
 vim.keymap.set('n', '<leader>kk', explore.grep_relative)
 

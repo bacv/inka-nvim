@@ -16,19 +16,33 @@ end
 local fzf = function(cwd)
     local _, win = create_float()
     local temp_file = os.tmpname()
-    local cmd = string.format("cd %s; fd --type f | fzf > %s", cwd, temp_file)
 
-    vim.fn.termopen(cmd, {
+    -- We use printf to inject ANSI codes:
+    -- %s (Gray path) / %s (Default filename)
+    local list_cmd = [[fd --type f | while read l; do printf "\x1b[38;5;242m%s/\x1b[0m%s\n" "$(pwd)" "$l"; done]]
+
+    local fzf_cmd = "fzf --ansi " ..
+        "--header 'C-u: Parent Dir' " ..
+        "--bind 'ctrl-u:reload(cd .. && " .. list_cmd .. ")' " ..
+        "--nth -1 " .. -- Only search the filename (the part after the last /)
+        "> " .. temp_file
+
+    local full_cmd = string.format("cd %s && %s | %s", vim.fn.shellescape(cwd), list_cmd, fzf_cmd)
+
+    vim.fn.termopen(full_cmd, {
         on_exit = function()
             if vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_close(win, true) end
+
             local f = io.open(temp_file, "r")
             if f then
                 local selected = f:read("*l")
                 f:close()
                 os.remove(temp_file)
-                if selected then
-                    local full_path = cwd .. "/" .. selected
-                    vim.cmd("edit " .. vim.fn.fnameescape(full_path))
+
+                if selected and selected ~= "" then
+                    -- CRITICAL: Strip the ANSI codes before Neovim tries to open the path
+                    local clean_path = selected:gsub("\27%[[%d;]*m", "")
+                    vim.cmd("edit " .. vim.fn.fnameescape(clean_path))
                 end
             end
         end
