@@ -1,4 +1,6 @@
-local files = require("files")
+local explore = require("explore")
+CANDY_COLORS = require("colors")
+CANDY_COLORS:init()
 
 vim.lsp.config['lua_ls'] = {
     cmd = { 'lua-language-server' },
@@ -80,6 +82,9 @@ vim.opt.updatetime = 50
 vim.opt.timeoutlen = 400
 vim.opt.ttimeoutlen = 50
 
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
 
 vim.g.mapleader = " "
@@ -135,63 +140,13 @@ end, { expr = true })
 vim.opt.completeopt = { "menuone", "noselect", "noinsert", "popup", "preview" }
 vim.keymap.set('i', '<C-c>', '<C-x><C-o>', { noremap = true })
 
-vim.keymap.set('n', '<leader>jj', files.explore_root)
-vim.keymap.set('n', '<leader>ji', files.explore_relative)
-vim.keymap.set('n', '<leader>jk', files.grep_root)
-vim.keymap.set('n', '<leader>kk', files.grep_relative)
+vim.keymap.set('n', '<leader>jj', explore.fzf_root)
+vim.keymap.set('n', '<leader>ji', explore.fzf_relative)
+vim.keymap.set('n', '<leader>jk', explore.grep_root)
+vim.keymap.set('n', '<leader>kk', explore.grep_relative)
 
-local dark = {
-    functions        = "#ea9a97",
-    strings          = "#f6c177",
-    keywords         = "#eb6f92",
-    background       = "#0d0a0a",
-    foreground       = "#faf4ed",
-    selection        = "#275F69",
-    status           = "#56949f",
-    status_inactive  = "#cecacd",
-    search           = "#FF4949",
-    search_current   = "#FFC300",
-    float_background = "#26233a",
-    comments         = "#6e6a86"
-}
 
-local light = {
-    functions        = "#d7827e",
-    strings          = "#ea9d34",
-    keywords         = "#b4637a",
-    background       = "#faf4ed",
-    foreground       = "#575279",
-    selection        = "#9ccfd8",
-    status           = "#ea9a97",
-    status_inactive  = "#9893a5",
-    search           = "#FFF172",
-    search_current   = "#FF4949",
-    float_background = "#f2e9e1",
-    comments         = "#9893a5"
-}
-
-local colors = light
-vim.o.background = "light"
-
-local highlights = {
-    Function     = { fg = colors.functions, bold = true },
-    String       = { fg = colors.strings },
-    Keyword      = { fg = colors.keywords, italic = true },
-    Normal       = { fg = colors.foreground, bg = colors.background },
-    NormalFloat  = { fg = colors.foreground, bg = colors.float_background },
-    FloatBorder  = { fg = colors.foreground, bg = colors.background },
-    Visual       = { fg = "NONE", bg = colors.selection },
-    StatusLine   = { fg = colors.background, bg = colors.status },
-    StatusLineNC = { fg = colors.background, bg = colors.status_inactive },
-    Search       = { fg = colors.foreground, bg = colors.search },
-    CurSearch    = { fg = colors.background, bg = colors.search_current },
-    MatchParen   = { fg = "NONE", bg = colors.selection },
-    Comment      = { fg = colors.comments },
-}
-
-for group, settings in pairs(highlights) do
-    vim.api.nvim_set_hl(0, group, settings)
-end
+vim.keymap.set("n", "<leader>t", ":lua CANDY_COLORS:toggle()<CR>")
 
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
